@@ -20,6 +20,8 @@ import 'react-quill/dist/quill.snow.css'
 import ShowAlgorithm from './Components/ShowAlgorithm';
 import EditBlog from './Components/EditBlog';
 import { getUserAlgorithm } from './actions/algorithmActions';
+import EditEachBlog from './Components/EditEachBlog';
+import Footer from './Components/Footer';
 function App() {
   const{isAuthenticated,user}=useSelector((state)=>state.authState);
   useEffect(()=>{
@@ -44,8 +46,10 @@ function App() {
           <Route path="/createpost" element={<ProtectedRoute><PostCreation/></ProtectedRoute>}/>
           {/* <Route path="/algorithms/:category" element={<ShowAlgorithms/>}/> */}
           <Route path="/singlealgorithms/:id" element={<ShowAlgorithm/>}/>
-          <Route path="/editmyblog" element={<ProtectedRoute><EditBlog/></ProtectedRoute>}/>
+          <Route path="/myblogs" element={<ProtectedRoute><EditBlog/></ProtectedRoute>}/>
+          <Route path="editblogs/:id" element={<ProtectedRoute><EditEachBlog/></ProtectedRoute>}/>
         </Routes>
+        <Footer/>
       </div>
     </Router>
   );

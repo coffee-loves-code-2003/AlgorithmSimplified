@@ -107,13 +107,7 @@ function PostCreation() {
  
                   return
   }
- 
-
-
-  
-    
-  
-},[user,error,isAdded])
+ },[user,error,isAdded])
   const onChange=(e)=>{
     if(e.target.name==="coverpage")
   {

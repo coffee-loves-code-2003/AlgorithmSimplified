@@ -1,5 +1,5 @@
 const express=require('express');
-const { getAlgorithms, createAlgorithm, getSingleAlgorithm, updateAlgorithm, deleteAlgorithm } = require('../Controllers/algorithmController');
+const { getAlgorithms, createAlgorithm, getSingleAlgorithm, updateAlgorithm, deleteAlgorithm ,getUsersAlgorithm} = require('../Controllers/algorithmController');
 const {isAuthenticatedUser}=require('../Middlewares/authenticate')
 const router=express.Router();
 const multer =require('multer');
@@ -14,8 +14,8 @@ const upload=multer({storage:multer.diskStorage({
         callback(null,file.originalname)
     }
 })})
+router.route('/algorithms/myposts').get(isAuthenticatedUser,getUsersAlgorithm)
 router.route('/algorithms').get(getAlgorithms);
 router.route('/algorithms/new').post(isAuthenticatedUser,upload.single('coverpage'),createAlgorithm);
-router.route('/algorithms/:id').get(getSingleAlgorithm).put(isAuthenticatedUser,updateAlgorithm).delete(isAuthenticatedUser,deleteAlgorithm);
-
+router.route('/algorithms/:id').get(getSingleAlgorithm).put(isAuthenticatedUser,upload.single('coverpage'),updateAlgorithm).delete(isAuthenticatedUser,deleteAlgorithm);
 module.exports=router;

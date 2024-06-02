@@ -1,14 +1,28 @@
 import axios from 'axios';
-import { algorithmsFailed, algorithmsRequest, algorithmsSuccess,addAlgorithmFail,addAlgorithmRequest,addAlgorithmSuccess, useralgorithmsSuccess, useralgorithmsRequest,useralgorithmsFailed} from '../slices/algorithmSlice';
+import { algorithmsFailed, 
+        algorithmsRequest, 
+        algorithmsSuccess,
+        addAlgorithmFail,
+        addAlgorithmRequest,
+        addAlgorithmSuccess, 
+        useralgorithmsSuccess, 
+        useralgorithmsRequest,
+        useralgorithmsFailed, 
+        updateAlgorithmRequest, 
+        updateAlgorithmSuccess, 
+        updateAlgorithmFailed,
+        deletealgorithmfailed,
+        deletealgorithmrequest,
+        deletealgorithmsuccess} from '../slices/algorithmSlice';
 import {algorithmFailed,algorithmRequest,algorithmSuccess } from '../slices/singleAlgorithmSlice';
-export const getAlgorithm=(category)=>async(dispatch)=>
+export const getAlgorithm=(category,pagenumber)=>async(dispatch)=>
 {
 
     try
     {
         dispatch(algorithmsRequest());
         console.log(category);
-        const {data}=await axios.get(`/apicalls/algosimplified/algorithms?category=${category}`);
+        const {data}=await axios.get(`/apicalls/algosimplified/algorithms?category=${category}&page=${pagenumber}`);
         dispatch(algorithmsSuccess(data));
     }
 
@@ -76,3 +90,38 @@ export const getUserAlgorithm=()=>async(dispatch)=>
         dispatch(useralgorithmsFailed(error.response.data.message))
     }
 }
+
+
+export const updateUserAlgorithm=(algorithmData,id)=>async(dispatch)=>
+    {
+        try{
+            dispatch(updateAlgorithmRequest());
+            const config={
+                headers:{
+                    'Content-type':'multipart/form-data'
+                }
+            }
+            console.log("FROM ACTIONS"+algorithmData.get('coverpage'));
+            const {data} =await axios.put(`/apicalls/algosimplified/algorithms/${id}`,algorithmData,config);
+            dispatch(updateAlgorithmSuccess(data));
+        }
+        catch(error)
+        {
+            dispatch(updateAlgorithmFailed(error.response.data.message));
+        }
+    }
+
+
+
+export const deleteAlgorithm=(id)=>async(dispatch)=>
+    {
+        try{
+            dispatch(deletealgorithmrequest());
+            const {data} =await axios.delete(`/apicalls/algosimplified/algorithms/${id}`);
+            dispatch(deletealgorithmsuccess(data));
+        }
+        catch(error)
+        {
+            dispatch(deletealgorithmfailed(error.response.data.message));
+        }
+    }

@@ -5,7 +5,7 @@ const algoModel=require('../Models/algorithmModel')
 const APIFeatures=require('../utils/apiFeatures')
 exports.getAlgorithms=async(req,res,next)=>
 {
-    const getAlgorithmsByKeyword=new APIFeatures(algoModel.find(),req.query).search().filterbyCategory()
+    const getAlgorithmsByKeyword=new APIFeatures(algoModel.find(),req.query).search().filterbyCategory().paginationFeature(2)
     const algorithm=await getAlgorithmsByKeyword.query;
     res.status(200).json({
         success:true,
@@ -40,7 +40,7 @@ exports.createAlgorithm = catchAsyncError(async (req, res, next) => {
 
 //Get Single Blog
 
-exports.getSingleAlgorithm=async(req,res,next)=>
+exports.getSingleAlgorithm=catchAsyncError(async(req,res,next)=>
 {
 
     const SingleAlgorithm=await algoModel.findById(req.params.id);
@@ -61,11 +61,11 @@ exports.getSingleAlgorithm=async(req,res,next)=>
             SingleAlgorithm
         }
     )
-}
+})
 
 //updateAlgorithm
 
-exports.updateAlgorithm=async(req,res,next)=>
+exports.updateAlgorithm=catchAsyncError(async(req,res,next)=>
 {
     let verifyAlgorithmExist=await algoModel.findById(req.params.id);
     if(!verifyAlgorithmExist)
@@ -76,6 +76,12 @@ exports.updateAlgorithm=async(req,res,next)=>
                 message:"Could not find the blog"
             }
         );
+    }
+    
+   if(req.file)
+    {
+        req.body.coverpage = `${process.env.BACKEND_URL}/uploads/coverpage/${req.file.originalname}`;
+        console.log(req.body.coverpage);
     }
      verifyAlgorithmExist=await algoModel.findByIdAndUpdate(req.params.id,req.body,
         {
@@ -91,13 +97,13 @@ exports.updateAlgorithm=async(req,res,next)=>
             }
         )
 
-}
+})
 
 
 
 //Delete algorithm
 
-exports.deleteAlgorithm=async(req,res,next)=>
+exports.deleteAlgorithm=catchAsyncError(async(req,res,next)=>
 {
     let verifyAlgorithmExist=await algoModel.findById(req.params.id);
     if(!verifyAlgorithmExist)
@@ -117,7 +123,7 @@ exports.deleteAlgorithm=async(req,res,next)=>
             message:"Blog Post Deleted"
         }
     )
-}
+})
 
 exports.logoutUser=(req,res,next)=>
 {
@@ -133,3 +139,19 @@ exports.logoutUser=(req,res,next)=>
     }
 )
 }
+
+
+
+exports.getUsersAlgorithm=catchAsyncError(async (req,res,next)=>
+    {
+        let user_id=req.user._id;
+        let specificusersPosts=await algoModel.find({author:user_id})
+        if(!specificusersPosts)
+            {
+                return next(new ErrorHandler('No posts found- Feel feel to create one',400));
+            }
+        res.status(201).json({
+            specificusersPosts,
+            success:true
+        })
+    })
